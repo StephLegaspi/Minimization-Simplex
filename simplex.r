@@ -228,7 +228,7 @@ PhaseOne <- function(tableu){
   return(res)
 }
 
-SimplexMethod <- function(tableu){
+PhaseTwo <- function(tableu){
   list_phase_two = list()
   
   row_tableu = nrow(tableu)
@@ -267,22 +267,15 @@ SimplexMethod <- function(tableu){
   res = list(tableu=tableu, values=values, list_phase_two=list_phase_two)
 }
 
-
-init_tableu = matrix(
-  c(7, 11, 1, 0, 0, 0, 0, 77,
-    10, 8, 0, 1, 0, 0, 0, 80,
-    1, 0, 0, 0, 1, 0, 0, 9,
-    0, 1, 0, 0, 0, 1, 0, 6, 
-    -150, -175, 0, 0, 0, 0, 1, 0),
-  nrow = 5,
-  ncol = 8,
-  byrow = TRUE
-)
-
-dimnames(init_tableu) = list(
-  c("s1", "s2", "s3", "s4", "Z"),
-  c("r", "p", "s1", "s2", "s3", "s4", "Z", "RHS")
-)
+SimplexMethod <- function(df2){
+  proj_tableu = preprocessMatrix(df2)
+  phase_one = PhaseOne(proj_tableu)
+  phase_two = PhaseTwo(phase_one$tableu)
+  
+  #print(phase_one$list_phase_one)
+  #print(phase_two$tableu)
+  #print(phase_two$list_phase_two)
+}
 
 df2 = matrix(c(310, 10, 8, 6, 5, 4,
                260, 6, 5, 4, 3, 6,
@@ -295,13 +288,8 @@ df2 = matrix(c(310, 10, 8, 6, 5, 4,
       dimnames = list(c("Denver", "Phoenix", "Dallas", "Shipping", "Demands" ), c("Supply", "California", "Utah", "New Mexico", "Illinois", "New York")),
       byrow = TRUE)
 
-proj_tableu = preprocessMatrix(df2)
-phase_one = PhaseOne(proj_tableu)
-#print(phase_one$list_phase_one)
-phase_two = SimplexMethod(mod_tableu)
-#print(phase_two$tableu)
-#print(phase_two$list_phase_two)
 
+SimplexMethod(df2)
 
 
 
