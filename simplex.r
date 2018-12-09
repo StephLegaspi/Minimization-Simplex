@@ -66,17 +66,29 @@ InitValues <- function(col_names, col){
   return(values)
 }
 
+CheckSol <- function(col_tableu, row){
+  ctr = 0
+  for(i in 1:row){
+    if(col_tableu[i] == 1){ctr = ctr+1}
+  }
+  if(ctr > 1){ return(FALSE)}
+  else{ return(TRUE) }
+}
+
 GetValues <- function(tableu, row_tableu, col_tableu){
   col_names = colnames(tableu)
   values = InitValues(col_names, col_tableu)
   
-  for(row in 1:row_tableu){
-    for(col in 1:col_tableu){
-      if(tableu[row, col] == 1){
-        values[col_names[col]] = (tableu[row, col_tableu])
-      }    
+  for(col in 1:col_tableu){  
+    if(CheckSol(tableu[,col], row_tableu)==TRUE){
+      for(row in 1:row_tableu){
+          if(tableu[row, col] == 1){
+            values[col_names[col]] = (tableu[row, col_tableu])
+          }    
+      }
     }
-  }  
+  }
+  #print(values)
   return(values)
 }
 
@@ -272,24 +284,37 @@ SimplexMethod <- function(df2){
   phase_one = PhaseOne(proj_tableu)
   phase_two = PhaseTwo(phase_one$tableu)
   
+  return(list(phase_one=phase_one, phase_two=phase_two))
+  
   #print(phase_one$list_phase_one)
   #print(phase_two$tableu)
   #print(phase_two$list_phase_two)
 }
 
-df2 = matrix(c(310, 10, 8, 6, 5, 4,
-               260, 6, 5, 4, 3, 6,
-               280, 3, 4, 5, 5, 9,
-               0, 0, 0, 0, 0, 0,
-               NA, 180, 80, 200, 160, 220
-      ),
-      nrow = 5,
-      ncol = 6,
-      dimnames = list(c("Denver", "Phoenix", "Dallas", "Shipping", "Demands" ), c("Supply", "California", "Utah", "New Mexico", "Illinois", "New York")),
-      byrow = TRUE)
+oneMax <- function(df2){
+  r = SimplexMethod(df2)
+  return(length(r$phase_one$list_phase_one))
+}
+
+twoMax <- function(df2){
+  r = SimplexMethod(df2)
+  return(length(r$phase_two$list_phase_two))
+}
+
+#df2 = matrix(c(310, 10, 8, 6, 5, 4,
+#               260, 6, 5, 4, 3, 6,
+#               280, 3, 4, 5, 5, 9,
+#               0, 0, 0, 0, 0, 0,
+#               NA, 180, 80, 200, 160, 220
+#      ),
+#      nrow = 5,
+#      ncol = 6,
+#      dimnames = list(c("Denver", "Phoenix", "Dallas", "Shipping", "Demands" ), c("Supply", "California", "Utah", "New Mexico", "Illinois", "New York")),
+#      byrow = TRUE)
 
 
-SimplexMethod(df2)
+#result_simplex = SimplexMethod(df2)
+#print(result_simplex$phase_two$tableu)
 
 
 
